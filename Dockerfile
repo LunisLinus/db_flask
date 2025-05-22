@@ -43,4 +43,4 @@ USER myuser
 EXPOSE 5000
 
 # Инициализируем базу данных и запускаем приложение
-CMD python -c "from app.init_data import init_app; init_app()" && flask run --host=0.0.0.0 
+CMD sh -c "python -c 'from app.init_data import init_app; init_app()' && flask run --host=0.0.0.0"
