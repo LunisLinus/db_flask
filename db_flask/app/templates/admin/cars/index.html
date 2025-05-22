@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Управление автомобилями{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Автомобили</h1>
+        <a href="{{ url_for('admin.new_car') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Добавить автомобиль
+        </a>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Поиск автомобилей</h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('admin.cars') }}" class="row g-3">
+                <div class="col-md-4">
+                    <label for="model" class="form-label">Модель</label>
+                    <input type="text" class="form-control" id="model" name="model" value="{{ request.args.get('model', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="plate_number" class="form-label">Гос. номер</label>
+                    <input type="text" class="form-control" id="plate_number" name="plate_number" value="{{ request.args.get('plate_number', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="status" class="form-label">Статус</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="">Все</option>
+                        <option value="active" {% if request.args.get('status') == 'active' %}selected{% endif %}>Активен</option>
+                        <option value="maintenance" {% if request.args.get('status') == 'maintenance' %}selected{% endif %}>На обслуживании</option>
+                        <option value="inactive" {% if request.args.get('status') == 'inactive' %}selected{% endif %}>Неактивен</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Поиск</button>
+                    <a href="{{ url_for('admin.cars') }}" class="btn btn-secondary">Сбросить</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Список автомобилей</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Модель</th>
+                            <th>Гос. номер</th>
+                            <th>Грузоподъемность (кг)</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for car in cars %}
+                        <tr>
+                            <td>{{ car.id }}</td>
+                            <td>{{ car.model }}</td>
+                            <td>{{ car.plate_number }}</td>
+                            <td>{{ car.capacity }}</td>
+                            <td>
+                                {% if car.status == 'active' %}
+                                    <span class="badge bg-success">Активен</span>
+                                {% elif car.status == 'maintenance' %}
+                                    <span class="badge bg-warning">На обслуживании</span>
+                                {% elif car.status == 'inactive' %}
+                                    <span class="badge bg-danger">Неактивен</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ car.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('admin.edit_car', id=car.id) }}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <p class="mb-0 py-3">Автомобили не найдены</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

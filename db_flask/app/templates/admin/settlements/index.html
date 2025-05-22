@@ -1,0 +1,60 @@
+{% extends "admin/index.html" %}
+
+{% block title %}Управление населенными пунктами{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Населенные пункты</h1>
+        <a href="{{ url_for('admin.new_settlement') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Добавить населенный пункт
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Список населенных пунктов</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Название</th>
+                            <th>Регион</th>
+                            <th>Страна</th>
+                            <th>Почтовый индекс</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for settlement in settlements %}
+                        <tr>
+                            <td>{{ settlement.id }}</td>
+                            <td>{{ settlement.name }}</td>
+                            <td>{{ settlement.region }}</td>
+                            <td>{{ settlement.country }}</td>
+                            <td>{{ settlement.postal_code }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <span class="btn btn-sm btn-secondary disabled">
+                                        <i class="fas fa-edit"></i>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <p class="mb-0 py-3">Населенные пункты не найдены</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

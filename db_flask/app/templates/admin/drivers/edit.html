@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Редактирование водителя{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Редактирование водителя</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="first_name">Имя</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ driver.first_name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="last_name">Фамилия</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ driver.last_name }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="license_number">Номер водительского удостоверения</label>
+            <input type="text" class="form-control" id="license_number" name="license_number" value="{{ driver.license_number }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Телефон</label>
+            <input type="tel" class="form-control" id="phone" name="phone" value="{{ driver.phone }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ driver.email }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="status">Статус</label>
+            <select class="form-control" id="status" name="status">
+                <option value="active" {% if driver.status == 'active' %}selected{% endif %}>Активный</option>
+                <option value="inactive" {% if driver.status == 'inactive' %}selected{% endif %}>Неактивный</option>
+                <option value="on_trip" {% if driver.status == 'on_trip' %}selected{% endif %}>В рейсе</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="car_id">Автомобиль</label>
+            <select class="form-control" id="car_id" name="car_id">
+                <option value="">Не назначен</option>
+                {% for car in cars %}
+                <option value="{{ car.id }}" {% if driver.car_id == car.id %}selected{% endif %}>
+                    {{ car.brand }} {{ car.model }} ({{ car.license_plate }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('admin.drivers') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

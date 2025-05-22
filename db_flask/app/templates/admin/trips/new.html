@@ -1,0 +1,90 @@
+{% extends "admin/index.html" %}
+
+{% block title %}Добавление нового рейса{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Добавление нового рейса</h1>
+        <a href="{{ url_for('admin.trips') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Вернуться к списку
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Информация о рейсе</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin.new_trip') }}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="departure_time" class="form-label">Время отправления</label>
+                        <input type="datetime-local" class="form-control" id="departure_time" name="departure_time" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="arrival_time" class="form-label">Время прибытия</label>
+                        <input type="datetime-local" class="form-control" id="arrival_time" name="arrival_time" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="departure_settlement_id" class="form-label">Пункт отправления</label>
+                        <select class="form-select" id="departure_settlement_id" name="departure_settlement_id" required>
+                            <option value="">Выберите пункт отправления</option>
+                            {% for settlement in settlements %}
+                            <option value="{{ settlement.id }}">{{ settlement.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="arrival_settlement_id" class="form-label">Пункт назначения</label>
+                        <select class="form-select" id="arrival_settlement_id" name="arrival_settlement_id" required>
+                            <option value="">Выберите пункт назначения</option>
+                            {% for settlement in settlements %}
+                            <option value="{{ settlement.id }}">{{ settlement.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="driver_id" class="form-label">Водитель</label>
+                        <select class="form-select" id="driver_id" name="driver_id" required>
+                            <option value="">Выберите водителя</option>
+                            {% for driver in drivers %}
+                            <option value="{{ driver.id }}">{{ driver.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="car_id" class="form-label">Автомобиль</label>
+                        <select class="form-select" id="car_id" name="car_id" required>
+                            <option value="">Выберите автомобиль</option>
+                            {% for car in cars %}
+                            <option value="{{ car.id }}">{{ car.model }} ({{ car.plate_number }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Примечания</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Сохранить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

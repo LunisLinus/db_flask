@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Редактирование рейса{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Редактирование рейса</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="destination">Пункт назначения</label>
+            <input type="text" class="form-control" id="destination" name="destination" value="{{ trip.destination }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="driver_id">Водитель</label>
+            <select class="form-control" id="driver_id" name="driver_id" required>
+                {% for driver in drivers %}
+                <option value="{{ driver.id }}" {% if trip.driver_id == driver.id %}selected{% endif %}>
+                    {{ driver.first_name }} {{ driver.last_name }} ({{ driver.license_number }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="car_id">Автомобиль</label>
+            <select class="form-control" id="car_id" name="car_id" required>
+                {% for car in cars %}
+                <option value="{{ car.id }}" {% if trip.car_id == car.id %}selected{% endif %}>
+                    {{ car.brand }} {{ car.model }} ({{ car.license_plate }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="departure_time">Время отправления</label>
+            <input type="datetime-local" class="form-control" id="departure_time" name="departure_time" 
+                   value="{{ trip.departure_time.strftime('%Y-%m-%dT%H:%M') if trip.departure_time }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="arrival_time">Время прибытия</label>
+            <input type="datetime-local" class="form-control" id="arrival_time" name="arrival_time"
+                   value="{{ trip.arrival_time.strftime('%Y-%m-%dT%H:%M') if trip.arrival_time }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="status">Статус</label>
+            <select class="form-control" id="status" name="status">
+                <option value="planned" {% if trip.status == 'planned' %}selected{% endif %}>Запланирован</option>
+                <option value="in_progress" {% if trip.status == 'in_progress' %}selected{% endif %}>В пути</option>
+                <option value="completed" {% if trip.status == 'completed' %}selected{% endif %}>Завершен</option>
+                <option value="cancelled" {% if trip.status == 'cancelled' %}selected{% endif %}>Отменен</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('admin.trips') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

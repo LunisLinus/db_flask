@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика по пунктам выдачи - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Статистика по пунктам выдачи</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Заказы по населенным пунктам</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Населенный пункт</th>
+                                <th>Количество заказов</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for settlement, count in orders_by_settlement %}
+                            <tr>
+                                <td>{{ settlement }}</td>
+                                <td>{{ count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Общая информация</h5>
+                </div>
+                <div class="card-body">
+                    <div class="border rounded p-3 text-center mb-3">
+                        <h6 class="mb-2">Всего пунктов выдачи</h6>
+                        <h3>{{ pickup_points|length }}</h3>
+                    </div>
+                    <div class="border rounded p-3 text-center">
+                        <h6 class="mb-2">Количество населенных пунктов</h6>
+                        <h3>{{ orders_by_settlement|length }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Список пунктов выдачи</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>Адрес</th>
+                                <th>Населенный пункт</th>
+                                <th>Телефон</th>
+                                <th>Часы работы</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for point in pickup_points %}
+                            <tr>
+                                <td>{{ point.id }}</td>
+                                <td>{{ point.name }}</td>
+                                <td>{{ point.address }}</td>
+                                <td>{{ point.settlement.name if point.settlement else 'Не указан' }}</td>
+                                <td>{{ point.phone }}</td>
+                                <td>{{ point.working_hours }}</td>
+                                <td>
+                                    {% if point.is_active %}
+                                        <span class="badge bg-success">Активен</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Неактивен</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

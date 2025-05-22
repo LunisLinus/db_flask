@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Результаты поиска - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Результаты поиска</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">Найденные заказы</h5>
+            <a href="{{ url_for('main.search') }}" class="btn btn-sm btn-primary">Новый поиск</a>
+        </div>
+        <div class="card-body">
+            {% if orders %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Дата создания</th>
+                                <th>Адрес доставки</th>
+                                <th>Статус</th>
+                                <th>Стоимость</th>
+                                <th>Пункт выдачи</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.created_at.strftime('%d.%m.%Y %H:%M') if order.created_at else 'Н/Д' }}</td>
+                                <td>{{ order.delivery_address }}</td>
+                                <td>
+                                    {% if order.status == 'new' %}
+                                        <span class="badge bg-primary">Новый</span>
+                                    {% elif order.status == 'processing' %}
+                                        <span class="badge bg-warning">В обработке</span>
+                                    {% elif order.status == 'delivery' %}
+                                        <span class="badge bg-info">Доставляется</span>
+                                    {% elif order.status == 'completed' %}
+                                        <span class="badge bg-success">Завершен</span>
+                                    {% elif order.status == 'cancelled' %}
+                                        <span class="badge bg-danger">Отменен</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ order.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ '{:,.2f}'.format(order.price or 0) }} руб.</td>
+                                <td>
+                                    {% if order.pickup_point %}
+                                        {{ order.pickup_point.name }}
+                                    {% else %}
+                                        Не указан
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('orders.view', id=order.id) }}" class="btn btn-sm btn-info">Просмотр</a>
+                                        <a href="{{ url_for('orders.edit', id=order.id) }}" class="btn btn-sm btn-warning">Редактировать</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <strong>Всего заказов:</strong> {{ orders|length }}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    По вашему запросу ничего не найдено. 
+                    <a href="{{ url_for('main.search') }}" class="alert-link">Измените параметры поиска</a> и попробуйте снова.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    {% if orders %}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Список грузов в найденных заказах</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Заказ ID</th>
+                            <th>Название груза</th>
+                            <th>Вес (кг)</th>
+                            <th>Объем (м³)</th>
+                            <th>Тип груза</th>
+                            <th>Тип упаковки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            {% for cargo in order.cargos %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ cargo.name }}</td>
+                                <td>{{ cargo.weight }}</td>
+                                <td>{{ cargo.volume }}</td>
+                                <td>{{ cargo.cargo_type }}</td>
+                                <td>{{ cargo.package_type }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td colspan="5" class="text-center">Нет грузов в заказе</td>
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

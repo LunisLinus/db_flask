@@ -1,0 +1,99 @@
+{% extends "admin/index.html" %}
+
+{% block title %}Управление страховками{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Страховки</h1>
+        <a href="{{ url_for('admin.new_insurance') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Добавить страховку
+        </a>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Поиск страховок</h5>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('admin.insurances') }}" class="row g-3">
+                <div class="col-md-4">
+                    <label for="policy_number" class="form-label">Номер полиса</label>
+                    <input type="text" class="form-control" id="policy_number" name="policy_number" value="{{ request.args.get('policy_number', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="insurance_type" class="form-label">Тип страховки</label>
+                    <select class="form-select" id="insurance_type" name="insurance_type">
+                        <option value="">Все</option>
+                        {% for type in insurance_types %}
+                        <option value="{{ type.id }}" {% if request.args.get('insurance_type')|int == type.id %}selected{% endif %}>{{ type.type }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="date_range" class="form-label">Период действия</label>
+                    <input type="text" class="form-control" id="date_range" name="date_range" value="{{ request.args.get('date_range', '') }}" placeholder="дд.мм.гггг - дд.мм.гггг">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Поиск</button>
+                    <a href="{{ url_for('admin.insurances') }}" class="btn btn-secondary">Сбросить</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Список страховок</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Номер полиса</th>
+                            <th>Тип страховки</th>
+                            <th>Дата начала</th>
+                            <th>Дата окончания</th>
+                            <th>Стоимость</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for insurance in insurances %}
+                        <tr>
+                            <td>{{ insurance.id }}</td>
+                            <td>{{ insurance.policy_number }}</td>
+                            <td>
+                                {% if insurance.insurance_type %}
+                                    {{ insurance.insurance_type.type }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>{{ insurance.start_date.strftime('%d.%m.%Y') }}</td>
+                            <td>{{ insurance.end_date.strftime('%d.%m.%Y') }}</td>
+                            <td>{{ insurance.cost }} руб.</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('admin.edit_insurance', id=insurance.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                <p class="mb-0 py-3">Страховки не найдены</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

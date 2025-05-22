@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-4">Добро пожаловать в систему управления логистикой</h1>
+            <p class="lead mb-4">
+                Наша система поможет вам эффективно управлять транспортной логистикой,
+                отслеживать заказы и оптимизировать доставку.
+            </p>
+            {% if not current_user.is_authenticated %}
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg px-4 gap-3">Войти</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-secondary btn-lg px-4">Регистрация</a>
+                </div>
+            {% else %}
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg px-4 gap-3">Панель управления</a>
+                    <a href="{{ url_for('orders.index') }}" class="btn btn-outline-secondary btn-lg px-4">Мои заказы</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-truck fa-3x mb-3 text-primary"></i>
+                    <h3 class="card-title">Управление транспортом</h3>
+                    <p class="card-text">
+                        Отслеживайте местоположение транспорта, управляйте водителями
+                        и оптимизируйте маршруты доставки.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-box fa-3x mb-3 text-primary"></i>
+                    <h3 class="card-title">Управление заказами</h3>
+                    <p class="card-text">
+                        Создавайте и отслеживайте заказы, управляйте грузами
+                        и контролируйте процесс доставки.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x mb-3 text-primary"></i>
+                    <h3 class="card-title">Аналитика и отчеты</h3>
+                    <p class="card-text">
+                        Получайте подробную статистику и аналитические отчеты
+                        для оптимизации логистических процессов.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

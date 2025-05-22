@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Панель управления - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Панель управления</h1>
+    
+    <!-- Key Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Активные заказы</h5>
+                    <h2 class="card-text">{{ active_orders_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Доступный транспорт</h5>
+                    <h2 class="card-text">{{ available_vehicles_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Завершенные заказы</h5>
+                    <h2 class="card-text">{{ completed_orders_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Требуют внимания</h5>
+                    <h2 class="card-text">{{ attention_required_count }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Последние заказы</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Клиент</th>
+                                    <th>Статус</th>
+                                    <th>Дата</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.client_name }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ order.status_color }}">
+                                            {{ order.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ order.created_at.strftime('%d.%m.%Y') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('orders.view', order_id=order.id) }}" 
+                                           class="btn btn-sm btn-primary">
+                                            Просмотр
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Быстрые действия</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('orders.create') }}" class="btn btn-primary">
+                            Создать заказ
+                        </a>
+                        <a href="{{ url_for('vehicles.create') }}" class="btn btn-success">
+                            Добавить транспорт
+                        </a>
+                        <a href="{{ url_for('reports.generate') }}" class="btn btn-info">
+                            Сформировать отчет
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика по грузам - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Статистика по грузам</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Фильтры отчета</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-5">
+                            <label for="start_date" class="form-label">Начальная дата</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+                        </div>
+                        <div class="col-md-5">
+                            <label for="end_date" class="form-label">Конечная дата</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Применить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Общая статистика</h5>
+                </div>
+                <div class="card-body">
+                    <div class="border rounded p-3 text-center mb-3">
+                        <h6 class="mb-2">Всего грузов</h6>
+                        <h3>{{ total_cargos }}</h3>
+                    </div>
+                    <div class="border rounded p-3 text-center mb-3">
+                        <h6 class="mb-2">Общий вес</h6>
+                        <h3>{{ '{:,.2f}'.format(total_weight) }} кг</h3>
+                    </div>
+                    <div class="border rounded p-3 text-center">
+                        <h6 class="mb-2">Общий объем</h6>
+                        <h3>{{ '{:,.2f}'.format(total_volume) }} м³</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Грузы по типам</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Тип груза</th>
+                                <th>Количество</th>
+                                <th>Общий вес (кг)</th>
+                                <th>Доля</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for type, count, weight in cargo_by_type %}
+                            <tr>
+                                <td>{{ type }}</td>
+                                <td>{{ count }}</td>
+                                <td>{{ '{:,.2f}'.format(weight) }}</td>
+                                <td>{{ '{:.1f}'.format(count / total_cargos * 100 if total_cargos else 0) }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Распределение по типам упаковки</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Тип упаковки</th>
+                                <th>Количество</th>
+                                <th>Процент</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for type, count in package_types %}
+                            <tr>
+                                <td>{{ type }}</td>
+                                <td>{{ count }}</td>
+                                <td>{{ '{:.1f}'.format(count / total_cargos * 100 if total_cargos else 0) }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Установка текущей даты, если не выбрана
+        const today = new Date();
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        
+        if (!startDateInput.value) {
+            // Установка даты на начало месяца
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            startDateInput.valueAsDate = firstDayOfMonth;
+        }
+        
+        if (!endDateInput.value) {
+            endDateInput.valueAsDate = today;
+        }
+    });
+</script>
+{% endblock %} 

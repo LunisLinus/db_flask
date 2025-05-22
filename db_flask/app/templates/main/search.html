@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Комплексный поиск</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">Параметры поиска</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('main.search') }}">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="query" class="form-label">Поисковый запрос</label>
+                        <input type="text" class="form-control" id="query" name="query" placeholder="Введите текст для поиска">
+                        <div class="form-text">Поиск по адресу доставки, примечаниям, названию груза</div>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="start_date" class="form-label">Дата от</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="end_date" class="form-label">Дата до</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date">
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="order_status" class="form-label">Статус заказа</label>
+                        <select class="form-select" id="order_status" name="order_status">
+                            <option value="">Любой статус</option>
+                            <option value="new">Новый</option>
+                            <option value="processing">В обработке</option>
+                            <option value="delivery">Доставляется</option>
+                            <option value="completed">Завершен</option>
+                            <option value="cancelled">Отменен</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="insurance_type_id" class="form-label">Тип страховки</label>
+                        <select class="form-select" id="insurance_type_id" name="insurance_type_id">
+                            <option value="">Любой тип</option>
+                            {% for insurance in insurance_types %}
+                                <option value="{{ insurance.id }}">{{ insurance.type }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="min_price" class="form-label">Минимальная стоимость</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="min_price" name="min_price" min="0" step="0.01">
+                            <span class="input-group-text">руб.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="max_price" class="form-label">Максимальная стоимость</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="max_price" name="max_price" min="0" step="0.01">
+                            <span class="input-group-text">руб.</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="settlement_id" class="form-label">Населенный пункт</label>
+                        <select class="form-select" id="settlement_id" name="settlement_id">
+                            <option value="">Выберите населенный пункт</option>
+                            {% for settlement in settlements %}
+                                <option value="{{ settlement.id }}">{{ settlement.name }}, {{ settlement.region }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="pickup_point_id" class="form-label">Пункт выдачи</label>
+                        <select class="form-select" id="pickup_point_id" name="pickup_point_id" disabled>
+                            <option value="">Сначала выберите населенный пункт</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <h5 class="mt-4 mb-3">Параметры груза</h5>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="cargo_type" class="form-label">Тип груза</label>
+                        <select class="form-select" id="cargo_type" name="cargo_type">
+                            <option value="">Любой тип</option>
+                            <option value="Стандартный">Стандартный</option>
+                            <option value="Хрупкий">Хрупкий</option>
+                            <option value="Тяжелый">Тяжелый</option>
+                            <option value="Опасный">Опасный</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="min_weight" class="form-label">Минимальный вес</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="min_weight" name="min_weight" min="0" step="0.01">
+                            <span class="input-group-text">кг</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="max_weight" class="form-label">Максимальный вес</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="max_weight" name="max_weight" min="0" step="0.01">
+                            <span class="input-group-text">кг</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 d-grid">
+                    <button type="submit" class="btn btn-primary">Выполнить поиск</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const settlementSelect = document.getElementById('settlement_id');
+        const pickupPointSelect = document.getElementById('pickup_point_id');
+        
+        // Обработка изменения населенного пункта
+        settlementSelect.addEventListener('change', function() {
+            const settlementId = this.value;
+            pickupPointSelect.disabled = !settlementId;
+            
+            if (settlementId) {
+                // Загрузка пунктов выдачи для выбранного населенного пункта
+                fetch(`/api/pickup-points-by-settlement/${settlementId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        pickupPointSelect.innerHTML = '<option value="">Выберите пункт выдачи</option>';
+                        data.forEach(point => {
+                            const option = document.createElement('option');
+                            option.value = point.id;
+                            option.textContent = `${point.name} (${point.address})`;
+                            pickupPointSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Ошибка загрузки пунктов выдачи:', error));
+            } else {
+                pickupPointSelect.innerHTML = '<option value="">Сначала выберите населенный пункт</option>';
+            }
+        });
+        
+        // Установка текущей даты если поле пустое
+        const today = new Date();
+        const endDateInput = document.getElementById('end_date');
+        if (!endDateInput.value) {
+            endDateInput.valueAsDate = today;
+        }
+        
+        // Установка даты начала месяца если поле пустое
+        const startDateInput = document.getElementById('start_date');
+        if (!startDateInput.value) {
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            startDateInput.valueAsDate = firstDayOfMonth;
+        }
+    });
+</script>
+{% endblock %} 

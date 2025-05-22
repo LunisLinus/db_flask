@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Административная панель{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="mb-4">Административная панель</h1>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Управление системой</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-building fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Компании</h5>
+                                    <p class="card-text">Управление компаниями и страховыми типами</p>
+                                    <a href="{{ url_for('admin.companies') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-truck fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Автомобили</h5>
+                                    <p class="card-text">Управление автопарком</p>
+                                    <a href="{{ url_for('admin.cars') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Водители</h5>
+                                    <p class="card-text">Управление водителями</p>
+                                    <a href="{{ url_for('admin.drivers') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-map-marker-alt fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Населенные пункты</h5>
+                                    <p class="card-text">Управление населенными пунктами</p>
+                                    <a href="{{ url_for('admin.settlements') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-store fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Пункты выдачи</h5>
+                                    <p class="card-text">Управление пунктами выдачи</p>
+                                    <a href="{{ url_for('admin.pickup_points') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-box fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Заказы</h5>
+                                    <p class="card-text">Управление заказами</p>
+                                    <a href="{{ url_for('admin.orders') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-route fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Рейсы</h5>
+                                    <p class="card-text">Управление рейсами</p>
+                                    <a href="{{ url_for('admin.trips') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-shield-alt fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Страховки</h5>
+                                    <p class="card-text">Управление типами страховок</p>
+                                    <a href="{{ url_for('admin.insurance_types') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Пользователи</h5>
+                                    <p class="card-text">Управление пользователями</p>
+                                    <a href="{{ url_for('admin.users') }}" class="btn btn-primary">Перейти</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

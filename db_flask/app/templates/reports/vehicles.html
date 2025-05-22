@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика по транспортным средствам - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Статистика по транспортным средствам</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Автомобили по статусам</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Статус</th>
+                                <th>Количество</th>
+                                <th>Процент</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for status, count in cars_by_status %}
+                            <tr>
+                                <td>
+                                    {% if status == 'active' %}
+                                        <span class="badge bg-success">Активен</span>
+                                    {% elif status == 'maintenance' %}
+                                        <span class="badge bg-warning">На обслуживании</span>
+                                    {% elif status == 'repair' %}
+                                        <span class="badge bg-danger">В ремонте</span>
+                                    {% elif status == 'idle' %}
+                                        <span class="badge bg-secondary">Простой</span>
+                                    {% else %}
+                                        <span class="badge bg-primary">{{ status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ count }}</td>
+                                <td>{{ '{:.1f}'.format(count / cars|length * 100 if cars|length else 0) }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Водители по статусам</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Статус</th>
+                                <th>Количество</th>
+                                <th>Процент</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for status, count in drivers_by_status %}
+                            <tr>
+                                <td>
+                                    {% if status == 'active' %}
+                                        <span class="badge bg-success">Активен</span>
+                                    {% elif status == 'on_trip' %}
+                                        <span class="badge bg-primary">В рейсе</span>
+                                    {% elif status == 'vacation' %}
+                                        <span class="badge bg-info">Отпуск</span>
+                                    {% elif status == 'sick_leave' %}
+                                        <span class="badge bg-warning">Больничный</span>
+                                    {% elif status == 'dismissed' %}
+                                        <span class="badge bg-danger">Уволен</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ count }}</td>
+                                <td>{{ '{:.1f}'.format(count / drivers|length * 100 if drivers|length else 0) }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Список автомобилей</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Модель</th>
+                                <th>Гос. номер</th>
+                                <th>Грузоподъемность</th>
+                                <th>Статус</th>
+                                <th>Последнее ТО</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for car in cars %}
+                            <tr>
+                                <td>{{ car.id }}</td>
+                                <td>{{ car.model }}</td>
+                                <td>{{ car.plate_number }}</td>
+                                <td>{{ car.capacity }} кг</td>
+                                <td>
+                                    {% if car.status == 'active' %}
+                                        <span class="badge bg-success">Активен</span>
+                                    {% elif car.status == 'maintenance' %}
+                                        <span class="badge bg-warning">На обслуживании</span>
+                                    {% elif car.status == 'repair' %}
+                                        <span class="badge bg-danger">В ремонте</span>
+                                    {% elif car.status == 'idle' %}
+                                        <span class="badge bg-secondary">Простой</span>
+                                    {% else %}
+                                        <span class="badge bg-primary">{{ car.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ car.last_maintenance.strftime('%d.%m.%Y') if car.last_maintenance else 'Не проводилось' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Список водителей</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ФИО</th>
+                                <th>Номер телефона</th>
+                                <th>Статус</th>
+                                <th>Возраст</th>
+                                <th>Опыт работы</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for driver in drivers %}
+                            <tr>
+                                <td>{{ driver.id }}</td>
+                                <td>{{ driver.full_name }}</td>
+                                <td>{{ driver.phone_number }}</td>
+                                <td>
+                                    {% if driver.status == 'active' %}
+                                        <span class="badge bg-success">Активен</span>
+                                    {% elif driver.status == 'on_trip' %}
+                                        <span class="badge bg-primary">В рейсе</span>
+                                    {% elif driver.status == 'vacation' %}
+                                        <span class="badge bg-info">Отпуск</span>
+                                    {% elif driver.status == 'sick_leave' %}
+                                        <span class="badge bg-warning">Больничный</span>
+                                    {% elif driver.status == 'dismissed' %}
+                                        <span class="badge bg-danger">Уволен</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ driver.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ driver.age if driver.age else 'Не указан' }}</td>
+                                <td>{{ driver.experience if driver.experience else 'Не указан' }} лет</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

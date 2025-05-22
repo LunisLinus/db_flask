@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Редактирование страховки{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Редактирование страховки</h1>
+        <a href="{{ url_for('admin.insurances') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Вернуться к списку
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Информация о страховке</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label for="policy_number" class="form-label">Номер полиса</label>
+                    <input type="text" class="form-control" id="policy_number" name="policy_number" value="{{ insurance.policy_number }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="insurance_type_id" class="form-label">Тип страховки</label>
+                    <select class="form-select" id="insurance_type_id" name="insurance_type_id" required>
+                        <option value="">Выберите тип страховки</option>
+                        {% for insurance_type in insurance_types %}
+                        <option value="{{ insurance_type.id }}" {% if insurance.insurance_type_id == insurance_type.id %}selected{% endif %}>{{ insurance_type.type }} ({{ insurance_type.price }} руб.)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="start_date" class="form-label">Дата начала</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ insurance.start_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="end_date" class="form-label">Дата окончания</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ insurance.end_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="cost" class="form-label">Стоимость (руб.)</label>
+                    <input type="number" class="form-control" id="cost" name="cost" step="0.01" value="{{ insurance.cost }}" required>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Сохранить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

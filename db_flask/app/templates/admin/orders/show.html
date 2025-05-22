@@ -1,0 +1,94 @@
+{% extends "admin/index.html" %}
+
+{% block title %}Просмотр заказа{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Просмотр заказа #{{ order.id }}</h1>
+        <a href="{{ url_for('admin.orders') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Вернуться к списку
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Информация о заказе</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h6>Основная информация</h6>
+                    <dl class="row">
+                        <dt class="col-sm-4">Статус</dt>
+                        <dd class="col-sm-8">{{ order.status }}</dd>
+                        
+                        <dt class="col-sm-4">Дата создания</dt>
+                        <dd class="col-sm-8">{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</dd>
+                        
+                        <dt class="col-sm-4">Сумма</dt>
+                        <dd class="col-sm-8">{{ order.total_amount }} ₽</dd>
+                    </dl>
+                </div>
+                
+                <div class="col-md-6">
+                    <h6>Информация о клиенте</h6>
+                    <dl class="row">
+                        <dt class="col-sm-4">Имя</dt>
+                        <dd class="col-sm-8">{{ order.client_name }}</dd>
+                        
+                        <dt class="col-sm-4">Телефон</dt>
+                        <dd class="col-sm-8">{{ order.client_phone }}</dd>
+                        
+                        <dt class="col-sm-4">Email</dt>
+                        <dd class="col-sm-8">{{ order.client_email or '-' }}</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h6>Детали поездки</h6>
+                    <dl class="row">
+                        <dt class="col-sm-2">Откуда</dt>
+                        <dd class="col-sm-10">{{ order.pickup_address }}</dd>
+                        
+                        <dt class="col-sm-2">Куда</dt>
+                        <dd class="col-sm-10">{{ order.dropoff_address }}</dd>
+                        
+                        <dt class="col-sm-2">Дата доставки</dt>
+                        <dd class="col-sm-10">{{ order.delivery_date.strftime('%d.%m.%Y') if order.delivery_date else '-' }}</dd>
+                    </dl>
+                </div>
+            </div>
+            
+            {% if order.driver %}
+            <div class="row mb-3">
+                <div class="col-12">
+                    <h6>Водитель</h6>
+                    <dl class="row">
+                        <dt class="col-sm-2">ФИО</dt>
+                        <dd class="col-sm-10">{{ order.driver.full_name }}</dd>
+                        
+                        <dt class="col-sm-2">Телефон</dt>
+                        <dd class="col-sm-10">{{ order.driver.phone }}</dd>
+                        
+                        <dt class="col-sm-2">Автомобиль</dt>
+                        <dd class="col-sm-10">{{ order.car.brand }} {{ order.car.model }} ({{ order.car.license_plate }})</dd>
+                    </dl>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if order.notes %}
+            <div class="row">
+                <div class="col-12">
+                    <h6>Примечания</h6>
+                    <p class="mb-0">{{ order.notes }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

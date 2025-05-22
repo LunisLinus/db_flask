@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика по заказам - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Статистика по заказам</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Фильтры отчета</h5>
+                </div>
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-5">
+                            <label for="start_date" class="form-label">Начальная дата</label>
+                            <input type="date" class="form-control" id="start_date" name="start_date" value="{{ request.args.get('start_date', '') }}">
+                        </div>
+                        <div class="col-md-5">
+                            <label for="end_date" class="form-label">Конечная дата</label>
+                            <input type="date" class="form-control" id="end_date" name="end_date" value="{{ request.args.get('end_date', '') }}">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Применить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Общая статистика</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="border rounded p-3 text-center">
+                                <h6 class="mb-2">Всего заказов</h6>
+                                <h3>{{ total_orders }}</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="border rounded p-3 text-center">
+                                <h6 class="mb-2">Общая стоимость</h6>
+                                <h3>{{ '{:,.2f}'.format(total_price) }} руб.</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title">Заказы по статусам</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Статус</th>
+                                <th>Количество</th>
+                                <th>Процент</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for status, count in orders_by_status %}
+                            <tr>
+                                <td>
+                                    {% if status == 'new' %}
+                                        <span class="badge bg-primary">Новый</span>
+                                    {% elif status == 'processing' %}
+                                        <span class="badge bg-warning">В обработке</span>
+                                    {% elif status == 'delivery' %}
+                                        <span class="badge bg-info">Доставляется</span>
+                                    {% elif status == 'completed' %}
+                                        <span class="badge bg-success">Завершен</span>
+                                    {% elif status == 'cancelled' %}
+                                        <span class="badge bg-danger">Отменен</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ count }}</td>
+                                <td>{{ '{:.1f}'.format(count / total_orders * 100 if total_orders else 0) }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Заказы по датам</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Количество заказов</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for date, count in orders_by_date %}
+                            <tr>
+                                <td>{{ date.strftime('%d.%m.%Y') }}</td>
+                                <td>{{ count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Установка текущей даты, если не выбрана
+        const today = new Date();
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        
+        if (!startDateInput.value) {
+            // Установка даты на начало месяца
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            startDateInput.valueAsDate = firstDayOfMonth;
+        }
+        
+        if (!endDateInput.value) {
+            endDateInput.valueAsDate = today;
+        }
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Заказ №{{ order.id }} - Логистическая система{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Заказ №{{ order.id }}</h1>
+        <div>
+            <a href="{{ url_for('orders.edit', id=order.id) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Редактировать
+            </a>
+            <a href="{{ url_for('orders.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Назад к списку
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title">Информация о заказе</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th style="width: 40%">Дата создания:</th>
+                            <td>{{ order.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Статус:</th>
+                            <td>
+                                <span class="badge bg-{{ {
+                                    'Новый': 'primary',
+                                    'В обработке': 'info',
+                                    'Отправлен': 'warning',
+                                    'Доставлен': 'success',
+                                    'Отменен': 'danger'
+                                }[order.status if order.status else 'Новый'] }}">
+                                    {{ order.status if order.status else 'Новый' }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Адрес доставки:</th>
+                            <td>{{ order.delivery_address }}</td>
+                        </tr>
+                        <tr>
+                            <th>Дата доставки:</th>
+                            <td>{{ order.delivery_date.strftime('%d.%m.%Y') if order.delivery_date else 'Не указана' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Способ оплаты:</th>
+                            <td>{{ order.payment_method.name if order.payment_method else 'Не указан' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Страховка:</th>
+                            <td>{{ order.insurance_type.name if order.insurance_type else 'Без страховки' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Пункт выдачи:</th>
+                            <td>{% if order.pickup_point %}{{ order.pickup_point.name }} ({{ order.pickup_point.address }}){% else %}Не указан{% endif %}</td>
+                        </tr>
+                        <tr>
+                            <th>Стоимость:</th>
+                            <td><strong>{{ order.price }} руб.</strong></td>
+                        </tr>
+                        {% if order.notes %}
+                        <tr>
+                            <th>Примечания:</th>
+                            <td>{{ order.notes }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title">Информация о клиенте</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th style="width: 40%">Имя:</th>
+                            <td>{{ order.client.first_name }} {{ order.client.last_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ order.client.email }}</td>
+                        </tr>
+                        {% if order.client.phone %}
+                        <tr>
+                            <th>Телефон:</th>
+                            <td>{{ order.client.phone }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if order.client.address %}
+                        <tr>
+                            <th>Адрес:</th>
+                            <td>{{ order.client.address }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title">Список грузов</h5>
+        </div>
+        <div class="card-body">
+            {% if order.cargos %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>№</th>
+                                <th>Наименование</th>
+                                <th>Вес (кг)</th>
+                                <th>Объем (м³)</th>
+                                <th>Тип груза</th>
+                                <th>Тип упаковки</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cargo in order.cargos %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ cargo.name }}</td>
+                                    <td>{{ cargo.weight }}</td>
+                                    <td>{{ cargo.volume }}</td>
+                                    <td>{{ cargo.cargo_type }}</td>
+                                    <td>{{ cargo.package_type }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">К заказу не добавлено ни одного груза.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if order.trips %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title">Информация о перевозке</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>№ рейса</th>
+                                <th>Дата отправления</th>
+                                <th>Дата прибытия</th>
+                                <th>Транспорт</th>
+                                <th>Водитель</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trip in order.trips %}
+                                <tr>
+                                    <td>{{ trip.id }}</td>
+                                    <td>{{ trip.departure_date.strftime('%d.%m.%Y %H:%M') if trip.departure_date else 'Не указана' }}</td>
+                                    <td>{{ trip.arrival_date.strftime('%d.%m.%Y %H:%M') if trip.arrival_date else 'Не указана' }}</td>
+                                    <td>{{ trip.car.model }} ({{ trip.car.reg_number }})</td>
+                                    <td>{{ trip.driver.last_name }} {{ trip.driver.first_name }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ {
+                                            'Запланирован': 'info',
+                                            'В пути': 'warning',
+                                            'Завершен': 'success',
+                                            'Отменен': 'danger'
+                                        }[trip.status if trip.status else 'Запланирован'] }}">
+                                            {{ trip.status if trip.status else 'Запланирован' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

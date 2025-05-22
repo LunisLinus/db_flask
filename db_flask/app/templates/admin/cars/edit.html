@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Редактирование автомобиля{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Редактирование автомобиля</h1>
+        <a href="{{ url_for('admin.cars') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Вернуться к списку
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Информация об автомобиле</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin.edit_car', id=car.id) }}">
+                <div class="mb-3">
+                    <label for="brand" class="form-label">Марка</label>
+                    <input type="text" class="form-control" id="brand" name="brand" value="{{ car.brand }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="model" class="form-label">Модель</label>
+                    <input type="text" class="form-control" id="model" name="model" value="{{ car.model }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="license_plate" class="form-label">Государственный номер</label>
+                    <input type="text" class="form-control" id="license_plate" name="license_plate" value="{{ car.license_plate }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="year" class="form-label">Год выпуска</label>
+                    <input type="number" class="form-control" id="year" name="year" value="{{ car.year }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="capacity" class="form-label">Грузоподъемность (кг)</label>
+                    <input type="number" class="form-control" id="capacity" name="capacity" value="{{ car.capacity }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="volume" class="form-label">Объем (м³)</label>
+                    <input type="number" class="form-control" id="volume" name="volume" value="{{ car.volume }}" step="0.01">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="status" class="form-label">Статус</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="active" {% if car.status == 'active' %}selected{% endif %}>Активен</option>
+                        <option value="maintenance" {% if car.status == 'maintenance' %}selected{% endif %}>На обслуживании</option>
+                        <option value="inactive" {% if car.status == 'inactive' %}selected{% endif %}>Неактивен</option>
+                    </select>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Сохранить изменения
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
