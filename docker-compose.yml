@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    environment:
+      - FLASK_APP
+      - FLASK_ENV
+      - DATABASE_URL
+      - SECRET_KEY
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    networks:
+      - logistics-network
+
+  db:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - logistics-network
+
+volumes:
+  postgres_data:
+
+networks:
+  logistics-network:
+    driver: bridge 
